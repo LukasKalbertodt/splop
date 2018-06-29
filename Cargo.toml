@@ -2,3 +2,17 @@
 name = "splop"
 version = "0.1.0"
 authors = ["Lukas Kalbertodt <lukas.kalbertodt@gmail.com>"]
+
+description = """
+Helper functions to determine the first/last repetition of something.
+"""
+documentation = "https://docs.rs/splop"
+repository = "https://github.com/LukasKalbertodt/splop"
+license = "MIT/Apache-2.0"
+keywords = ["first", "last", "iterator", "iter"]
+categories = ["rust-patterns"]
+readme = "README.md"
+
+[badges]
+travis-ci = { branch = "master", repository = "LukasKalbertodt/splop" }
+maintenance = { status = "actively-developed" }
