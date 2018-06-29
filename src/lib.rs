@@ -1,3 +1,12 @@
+//! Functions and types to do something special when repeating for the first or
+//! last time (or in between!). This crate offers two distinct features:
+//!
+//! - [`IterStatusExt::with_status`]: a new method for **iterators**, that
+//!   creates a new iterator which yields the item paired with information to
+//!   tell you if this is the first/last item.
+//! - [`SkipFirst`]: a simple struct to help you always do something, except on
+//!   the first repetition. Works without iterators, too!
+
 use std::{
     iter::{FusedIterator, Peekable},
 };
