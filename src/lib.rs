@@ -21,6 +21,8 @@ use std::{
 ///
 /// # Example
 ///
+/// In this example, it's also possible to use [`IterStatusExt::with_status`].
+///
 /// ```
 /// use splop::SkipFirst;
 ///
