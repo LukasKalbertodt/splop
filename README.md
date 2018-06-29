@@ -1,5 +1,8 @@
 Splop
 =====
+[![Build Status](https://api.travis-ci.org/LukasKalbertodt/splop.svg?branch=master)](https://travis-ci.org/LukasKalbertodt/splop)
+[![crates.io version](https://img.shields.io/crates/v/splop.svg)](https://crates.io/crates/splop)
+[![docs](https://docs.rs/splop/badge.svg)](https://docs.rs/splop)
 
 This tiny crate contains functions and types to help you do something special
 when repeating for the first or last time (or in between!). This crate offers
