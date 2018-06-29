@@ -1,16 +1,14 @@
 extern crate splop;
 
-use splop::IterStatusExt;
+use splop::SkipFirst;
 
 fn main() {
+    let mut comma = SkipFirst::new();
 
     print!("[");
-    for (i, status) in (1..13).filter(|i| i % 2 == 0).with_status() {
-        if !status.is_first() {
-            print!(", ");
-        }
-
-        print!("{}", i);
+    for name in &["banana", "melon", "kiwi"] {
+        comma.skip_first(|| print!(", "));
+        print!("{}", name);
     }
 
     println!("]");
