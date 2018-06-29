@@ -136,7 +136,9 @@ pub trait IterStatusExt: Iterator + Sized {
     /// status, which tells you if the item is the first and/or last one.
     ///
     /// The new iterator's item has the type `(Self::Item, Status)`. See
-    /// [`Status`] for detailed information.
+    /// [`Status`] for detailed information. The new iterator uses `peekable()`
+    /// internally, so if the `next()` call of the underlying iterator has
+    /// side effects, those will be visible earlier than expected.
     ///
     /// # Example
     ///
@@ -179,12 +181,76 @@ impl Status {
     /// Note that an item might simultaniously be the first and last item (if
     /// the iterator only contains one item). To check if the item is the first
     /// and and not the last, use [`Status::is_first_only`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use splop::IterStatusExt;
+    ///
+    /// let v: Vec<_> = (0..4)
+    ///     .with_status()
+    ///     .map(|(i, status)| (i, status.is_first()))
+    ///     .collect();
+    ///
+    /// assert_eq!(v, [
+    ///     (0, true),
+    ///     (1, false),
+    ///     (2, false),
+    ///     (3, false),
+    /// ]);
+    /// ```
+    ///
+    /// If there is only one element, this function returns `true`, as does
+    /// `is_last`:
+    ///
+    /// ```
+    /// use splop::IterStatusExt;
+    ///
+    /// let (_, status) = [27].iter()
+    ///     .with_status()
+    ///     .next()
+    ///     .unwrap();
+    ///
+    /// assert!(status.is_first());
+    /// assert!(status.is_last());
+    /// ```
     pub fn is_first(&self) -> bool {
         self.first
     }
 
     /// Returns `true` if this is the first item and it's not the only item in
     /// the iterator.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use splop::IterStatusExt;
+    ///
+    /// let v: Vec<_> = (0..4)
+    ///     .with_status()
+    ///     .map(|(i, status)| (i, status.is_first_only()))
+    ///     .collect();
+    ///
+    /// assert_eq!(v, [
+    ///     (0, true),
+    ///     (1, false),
+    ///     (2, false),
+    ///     (3, false),
+    /// ]);
+    /// ```
+    ///
+    /// If there is only one element, this function returns `false`:
+    ///
+    /// ```
+    /// use splop::IterStatusExt;
+    ///
+    /// let (_, status) = [27].iter()
+    ///     .with_status()
+    ///     .next()
+    ///     .unwrap();
+    ///
+    /// assert!(!status.is_first_only());
+    /// ```
     pub fn is_first_only(&self) -> bool {
         self.first && !self.last
     }
@@ -194,18 +260,99 @@ impl Status {
     /// Note that an item might simultaniously be the last and first item (if
     /// the iterator only contains one item). To check if the item is the last
     /// and and not the first, use [`Status::is_last_only`].
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use splop::IterStatusExt;
+    ///
+    /// let v: Vec<_> = (0..4)
+    ///     .with_status()
+    ///     .map(|(i, status)| (i, status.is_last()))
+    ///     .collect();
+    ///
+    /// assert_eq!(v, [
+    ///     (0, false),
+    ///     (1, false),
+    ///     (2, false),
+    ///     (3, true),
+    /// ]);
+    /// ```
+    ///
+    /// If there is only one element, this function returns `true`, as does
+    /// `is_first`:
+    ///
+    /// ```
+    /// use splop::IterStatusExt;
+    ///
+    /// let (_, status) = [27].iter()
+    ///     .with_status()
+    ///     .next()
+    ///     .unwrap();
+    ///
+    /// assert!(status.is_first());
+    /// assert!(status.is_last());
+    /// ```
     pub fn is_last(&self) -> bool {
         self.last
     }
 
     /// Returns `true` if this is the last item and it's not the only item in
     /// the iterator.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use splop::IterStatusExt;
+    ///
+    /// let v: Vec<_> = (0..4)
+    ///     .with_status()
+    ///     .map(|(i, status)| (i, status.is_last_only()))
+    ///     .collect();
+    ///
+    /// assert_eq!(v, [
+    ///     (0, false),
+    ///     (1, false),
+    ///     (2, false),
+    ///     (3, true),
+    /// ]);
+    /// ```
+    ///
+    /// If there is only one element, this function returns `false`:
+    ///
+    /// ```
+    /// use splop::IterStatusExt;
+    ///
+    /// let (_, status) = [27].iter()
+    ///     .with_status()
+    ///     .next()
+    ///     .unwrap();
+    ///
+    /// assert!(!status.is_last_only());
+    /// ```
     pub fn is_last_only(&self) -> bool {
-        self.first && !self.last
+        self.last && !self.first
     }
 
-
     /// Returns `true` if this is neither the first nor the last item.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use splop::IterStatusExt;
+    ///
+    /// let v: Vec<_> = (0..4)
+    ///     .with_status()
+    ///     .map(|(i, status)| (i, status.is_in_between()))
+    ///     .collect();
+    ///
+    /// assert_eq!(v, [
+    ///     (0, false),
+    ///     (1, true),
+    ///     (2, true),
+    ///     (3, false),
+    /// ]);
+    /// ```
     pub fn is_in_between(&self) -> bool {
         !self.first && !self.last
     }
