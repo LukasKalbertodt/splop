@@ -80,11 +80,12 @@ impl SkipFirst {
     ///
     /// assert_eq!(v, ["b2", "a2"]);
     /// ```
-    pub fn skip_first(&mut self, f: impl FnOnce()) {
+    pub fn skip_first<R>(&mut self, f: impl FnOnce() -> R) -> Option<R> {
         if self.first {
             self.first = false;
+            None
         } else {
-            f();
+            Some(f())
         }
     }
 }
